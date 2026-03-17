@@ -1,0 +1,68 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}{{ product.title }}{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="row g-5 align-items-start">
+        <div class="col-lg-6">
+            <div class="detail-image-card">
+                {% if product.images.all %}
+                    <img id="mainProductImage" src="{{ product.images.first.image.url }}" class="detail-main-image" alt="{{ product.title }}">
+                {% elif product.primary_image %}
+                    <img id="mainProductImage" src="{{ product.primary_image.url }}" class="detail-main-image" alt="{{ product.title }}">
+                {% else %}
+                    <div class="detail-main-image d-flex align-items-center justify-content-center bg-light text-muted">
+                        No Image
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if product.images.all %}
+                <div class="detail-thumbs mt-3 d-flex flex-wrap gap-2">
+                    {% for img in product.images.all %}
+                        <img
+                            src="{{ img.image.url }}"
+                            alt="{{ product.title }}"
+                            class="detail-thumb"
+                            onclick="document.getElementById('mainProductImage').src='{{ img.image.url }}'">
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-6">
+            <span class="detail-label">{{ product.category.name }}</span>
+            <h1 class="mt-3 mb-3">{{ product.title }}</h1>
+            <p class="detail-price">£{{ product.price }}</p>
+
+            <div class="item-meta mb-3">
+                <span>{{ product.condition }}</span>
+                <span>•</span>
+                <span>{{ product.location }}</span>
+            </div>
+
+            <p class="detail-description">{{ product.description }}</p>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <form action="{% url 'buy_now' %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <button type="submit" class="btn btn-success btn-lg">Buy Now</button>
+                </form>
+
+                {% if user.is_authenticated and user != product.seller %}
+                    <a href="{% url 'chat_start' product.id %}" class="btn btn-outline-dark btn-lg">Contact Seller</a>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                <small class="text-muted">
+                    Seller: {{ product.seller.username }}<br>
+                    Listed on: {{ product.created_at|date:"Y-m-d" }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}

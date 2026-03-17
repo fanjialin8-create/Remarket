@@ -1,0 +1,259 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+
+{% block banner_slider %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-6">
+                <span class="hero-badge">Second-Hand Marketplace</span>
+                <h1 class="hero-title">Find Great Pre-Owned Items Near You</h1>
+                <p class="hero-text">
+                    ReMarket helps people buy and sell quality pre-owned items with ease.
+                </p>
+                <div class="hero-actions">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'post_item' %}" class="btn btn-success btn-lg me-2">Post an Item</a>
+                    {% else %}
+                        <a href="{% url 'customerregistration' %}" class="btn btn-success btn-lg me-2">Start Selling</a>
+                    {% endif %}
+                    <a href="{% url 'search' %}" class="btn btn-outline-dark btn-lg">Browse Items</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image-wrap">
+                    <img src="{% static 'app/images/banner/b1.jpg' %}" alt="ReMarket banner" class="img-fluid hero-image">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock banner_slider %}
+
+{% block livesale %}
+<section class="trust-strip">
+    <div class="container">
+        <div class="row text-center gy-3">
+            <div class="col-md-4">
+                <div class="trust-card">
+                    <i class="fas fa-recycle trust-icon"></i>
+                    <h6>Reuse Better</h6>
+                    <p>Give items a second life and reduce waste.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="trust-card">
+                    <i class="fas fa-comments trust-icon"></i>
+                    <h6>Chat Directly</h6>
+                    <p>Talk to sellers before you buy.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="trust-card">
+                    <i class="fas fa-tags trust-icon"></i>
+                    <h6>Better Prices</h6>
+                    <p>Find quality items at budget-friendly prices.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock livesale %}
+
+{% block main-content %}
+<div class="container py-5">
+
+    <section class="category-grid-section mb-5">
+        <div class="section-head">
+            <div>
+                <p class="section-kicker">Browse by category</p>
+                <h2 class="section-title">Popular Categories</h2>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <a href="{% url 'category_items' 'electronics' %}" class="category-link">
+                    <div class="category-card">
+                        <i class="fas fa-mobile-alt category-icon"></i>
+                        <span>Phones &amp; Devices</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <a href="{% url 'category_items' 'electronics' %}" class="category-link">
+                    <div class="category-card">
+                        <i class="fas fa-laptop category-icon"></i>
+                        <span>Electronics</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <a href="{% url 'category_items' 'books' %}" class="category-link">
+                    <div class="category-card">
+                        <i class="fas fa-book category-icon"></i>
+                        <span>Books &amp; Study</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <a href="{% url 'category_items' 'clothing' %}" class="category-link">
+                    <div class="category-card">
+                        <i class="fas fa-tshirt category-icon"></i>
+                        <span>Fashion</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <div class="section-head">
+            <div>
+                <p class="section-kicker">Latest picks</p>
+                <h2 class="section-title">Phones &amp; Devices</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for product in mobile %}
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'product-detail' pk=product.id %}" class="item-card-link">
+                    <div class="item-card">
+                        <div class="item-image-wrap">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image">
+                            {% endif %}
+                            <span class="item-badge">Pre-Owned</span>
+                        </div>
+                        <div class="item-card-body">
+                            <h5 class="item-title">{{ product.title }}</h5>
+                            <p class="item-price">£{{ product.price }}</p>
+                            <div class="item-meta">
+                                <span>Good condition</span>
+                                <span>•</span>
+                                <span>Ready to chat</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p>No items available right now.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <div class="section-head">
+            <div>
+                <p class="section-kicker">Affordable tech</p>
+                <h2 class="section-title">Electronics</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for product in electronics %}
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'product-detail' pk=product.id %}" class="item-card-link">
+                    <div class="item-card">
+                        <div class="item-image-wrap">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image">
+                            {% endif %}
+                            <span class="item-badge">Verified Listing</span>
+                        </div>
+                        <div class="item-card-body">
+                            <h5 class="item-title">{{ product.title }}</h5>
+                            <p class="item-price">£{{ product.price }}</p>
+                            <div class="item-meta">
+                                <span>Pre-owned</span>
+                                <span>•</span>
+                                <span>Best value</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p>No items available right now.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <div class="section-head">
+            <div>
+                <p class="section-kicker">Wardrobe refresh</p>
+                <h2 class="section-title">Fashion</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for product in cloth %}
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'product-detail' pk=product.id %}" class="item-card-link">
+                    <div class="item-card">
+                        <div class="item-image-wrap">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image">
+                            {% endif %}
+                            <span class="item-badge">Trending</span>
+                        </div>
+                        <div class="item-card-body">
+                            <h5 class="item-title">{{ product.title }}</h5>
+                            <p class="item-price">£{{ product.price }}</p>
+                            <div class="item-meta">
+                                <span>Pre-loved</span>
+                                <span>•</span>
+                                <span>Budget-friendly</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p>No items available right now.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="mb-4">
+        <div class="section-head">
+            <div>
+                <p class="section-kicker">Study smarter</p>
+                <h2 class="section-title">Books &amp; Study</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for product in books %}
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'product-detail' pk=product.id %}" class="item-card-link">
+                    <div class="item-card">
+                        <div class="item-image-wrap">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image">
+                            {% endif %}
+                            <span class="item-badge">Student Pick</span>
+                        </div>
+                        <div class="item-card-body">
+                            <h5 class="item-title">{{ product.title }}</h5>
+                            <p class="item-price">£{{ product.price }}</p>
+                            <div class="item-meta">
+                                <span>Low cost</span>
+                                <span>•</span>
+                                <span>Quick buy</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p>No items available right now.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock main-content %}

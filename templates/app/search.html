@@ -1,0 +1,51 @@
+{% extends "app/base.html" %}
+{% block title %}Search{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="search-page-head mb-4">
+        <p class="section-kicker">Search</p>
+        <h1 class="section-title">Results for "{{ query }}"</h1>
+        <p class="search-subtext">Explore pre-owned items that match your search.</p>
+    </div>
+
+    {% if products %}
+        <div class="row g-4">
+            {% for product in products %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'product-detail' pk=product.id %}" class="item-card-link">
+                        <div class="item-card">
+                            <div class="item-image-wrap">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image">
+                                {% else %}
+                                    <div class="item-image d-flex align-items-center justify-content-center bg-light text-muted">
+                                        No Image
+                                    </div>
+                                {% endif %}
+                                <span class="item-badge">Search Match</span>
+                            </div>
+
+                            <div class="item-card-body">
+                                <h5 class="item-title">{{ product.title|truncatewords:4 }}</h5>
+                                <p class="item-price">£{{ product.price }}</p>
+                                <div class="item-meta">
+                                    <span>Pre-Owned</span>
+                                    <span>•</span>
+                                    <span>Available now</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state-card text-center">
+            <h4>No items found</h4>
+            <p>Try another keyword or search for a broader category.</p>
+            <a href="{% url 'home' %}" class="btn btn-success">Back to Home</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock main-content %}

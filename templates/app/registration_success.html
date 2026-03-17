@@ -1,0 +1,36 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Check Your Email{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="auth-page-wrap">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="market-form-card auth-form-card text-center">
+                    <div class="mb-4">
+                        <span class="display-4 text-success">✓</span>
+                    </div>
+                    <h3 class="auth-form-title">Registration Successful</h3>
+                    <p class="auth-form-subtext mb-4">
+                        We've sent a verification link to your email address.
+                        Please check your inbox and click the link to activate your account.
+                    </p>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="text-muted small mb-4">
+                        Didn't receive the email? Check your spam folder,
+                        <a href="{% url 'resend_verification' %}" class="auth-link">resend verification email</a>,
+                        or <a href="{% url 'customerregistration' %}" class="auth-link">register again</a>.
+                    </p>
+                    <a href="{% url 'login' %}" class="btn btn-success btn-lg me-2">Go to Login</a>
+                    <a href="{% url 'resend_verification' %}" class="btn btn-outline-success btn-lg">Resend Email</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}

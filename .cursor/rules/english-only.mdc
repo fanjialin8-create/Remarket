@@ -1,0 +1,16 @@
+---
+description: Project must use English only
+globs: 
+alwaysApply: true
+---
+
+# English Only
+
+This project must be **all in English**:
+- Code comments
+- Docstrings
+- User-facing messages (templates, form errors, flash messages)
+- Configuration file comments (.env, .env.example)
+- Documentation and README
+
+Do not use Chinese or other non-English languages in the codebase.

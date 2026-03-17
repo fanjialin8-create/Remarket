@@ -1,0 +1,55 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Chats{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="dashboard-header mb-4">
+        <p class="section-kicker">Messages</p>
+        <h1 class="section-title">My Chats</h1>
+        <p class="dashboard-subtext">Stay connected with buyers and sellers through your ReMarket conversations.</p>
+    </div>
+
+    {% if conversations %}
+        <div class="chat-list-wrap">
+            {% for c in conversations %}
+                <a href="{% url 'chat_detail' c.conversation.id %}" class="chat-list-card">
+                    <div class="chat-avatar">
+                        {{ c.other.username|slice:":1"|upper }}
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="chat-topline">
+                            <h5 class="chat-name mb-0">
+                                {{ c.other.username }}
+                                {% if c.conversation.item %}
+                                    <span class="chat-item-title">· {{ c.conversation.item.title }}</span>
+                                {% endif %}
+                            </h5>
+                            {% if c.last_message %}
+                                <small class="chat-time">{{ c.last_message.created_at|date:"m-d H:i" }}</small>
+                            {% endif %}
+                        </div>
+
+                        {% if c.last_message %}
+                            <p class="chat-preview mb-0">
+                                {{ c.last_message.content|truncatewords:12 }}
+                            </p>
+                        {% else %}
+                            <p class="chat-preview mb-0 text-muted">
+                                No messages yet.
+                            </p>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state-card text-center">
+            <h4>No chats yet</h4>
+            <p>Click “Contact Seller” on an item detail page to start a conversation.</p>
+            <a href="{% url 'home' %}" class="btn btn-success">Browse Items</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock main-content %}

@@ -1,0 +1,98 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Profile{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="dashboard-header mb-4">
+        <p class="section-kicker">Account</p>
+        <h1 class="section-title">My Profile</h1>
+        <p class="dashboard-subtext">View your account information and manage your ReMarket profile.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="content-card text-center">
+                <div class="profile-avatar mx-auto mb-3">
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+                <h4 class="mb-1">{{ request.user.username }}</h4>
+                <p class="text-muted mb-0">
+                    {{ request.user.email|default:"No email provided" }}
+                </p>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="content-card mb-4">
+                <h4 class="mb-4">Account Details</h4>
+
+                <div class="profile-info-grid">
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">Username</span>
+                        <p>{{ request.user.username }}</p>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">Email</span>
+                        <p>{{ request.user.email|default:"No email provided" }}</p>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">Joined</span>
+                        <p>{{ request.user.date_joined|date:"Y-m-d H:i" }}</p>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">Last Login</span>
+                        <p>{{ request.user.last_login|date:"Y-m-d H:i"|default:"-" }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    <a href="{% url 'dashboard' %}" class="btn btn-success">Go to Dashboard</a>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h4 class="mb-4">Change Password</h4>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'password_msg' in message.tags %}
+                            <div class="alert {% if message.level_tag == 'success' %}alert-success{% else %}alert-danger{% endif %} mb-3">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" action="{% url 'changepassword' %}">
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="current_password" class="form-label market-label">Current Password</label>
+                            <input type="password" class="form-control auth-input" id="current_password" name="current_password" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="new_password" class="form-label market-label">New Password</label>
+                            <input type="password" class="form-control auth-input" id="new_password" name="new_password" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="confirm_password" class="form-label market-label">Confirm New Password</label>
+                            <input type="password" class="form-control auth-input" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}

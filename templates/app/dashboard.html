@@ -1,0 +1,100 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="dashboard-header mb-4">
+        <p class="section-kicker">Account</p>
+        <h1 class="section-title">My Dashboard</h1>
+        <p class="dashboard-subtext">Manage your listings and keep track of your buying and selling activity.</p>
+    </div>
+
+    <div class="dashboard-actions mb-4">
+        <a href="{% url 'post_item' %}" class="btn btn-success me-2 mb-2">Post Item</a>
+        <a href="{% url 'orders' %}" class="btn btn-outline-dark me-2 mb-2">My Orders</a>
+        <a href="{% url 'chat_list' %}" class="btn btn-outline-dark mb-2">Chats</a>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <span class="stats-label">My Listings</span>
+                <h3>{{ my_items|length }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <span class="stats-label">Orders Bought</span>
+                <h3>{{ orders_bought|length }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <span class="stats-label">Orders Sold</span>
+                <h3>{{ orders_sold|length }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="content-card">
+                <div class="content-card-head">
+                    <h4>My Listings</h4>
+                    <a href="{% url 'post_item' %}" class="btn btn-sm btn-success">Add New</a>
+                </div>
+
+                {% if my_items %}
+                    <div class="listings-grid">
+                        {% for item in my_items %}
+                            <div class="listing-row">
+                                <div class="listing-main">
+                                    <h5 class="mb-1">{{ item.title }}</h5>
+                                    <p class="listing-price mb-0">£{{ item.price }}</p>
+                                </div>
+                                <div class="listing-actions">
+                                    <a href="{% url 'product-detail' pk=item.pk %}" class="btn btn-sm btn-outline-dark">View</a>
+                                    <a href="{% url 'edit_item' pk=item.pk %}" class="btn btn-sm btn-outline-success">Edit</a>
+                                    <a href="{% url 'remove_item' pk=item.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this item?')">Delete</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-mini-state">
+                        <p class="mb-2">You have not posted any items yet.</p>
+                        <a href="{% url 'post_item' %}" class="btn btn-success btn-sm">Post your first item</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="content-card mb-4">
+                <h4 class="mb-3">Order Summary</h4>
+                <div class="summary-line">
+                    <span>Bought</span>
+                    <strong>{{ orders_bought|length }}</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Sold</span>
+                    <strong>{{ orders_sold|length }}</strong>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'orders' %}" class="btn btn-outline-dark btn-sm">View Orders</a>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h4 class="mb-3">Quick Actions</h4>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'post_item' %}" class="btn btn-success">Post Item</a>
+                    <a href="{% url 'chat_list' %}" class="btn btn-outline-dark">Open Chats</a>
+                    <a href="{% url 'search' %}" class="btn btn-outline-dark">Search Items</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}

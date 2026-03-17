@@ -1,0 +1,26 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Manage Users{% endblock title %}
+{% block main-content %}
+<div class="container my-4">
+ <h2>Manage Users</h2>
+ <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary mb-3">Back to Dashboard</a>
+ <table class="table table-striped">
+  <thead>
+   <tr><th>ID</th><th>Username</th><th>Email</th><th>Admin</th><th>Status</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+   {% for u in users %}
+   <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.username }}</td>
+    <td>{{ u.email|default:"-" }}</td>
+    <td>{% if u.is_staff %}Yes{% else %}No{% endif %}</td>
+    <td>{% if u.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Disabled</span>{% endif %}</td>
+    <td>{% if u.is_active %}<a href="{% url 'admin_disable_user' u.id %}" class="btn btn-sm btn-warning" onclick="return confirm('Disable user?')">Disable</a>{% endif %}</td>
+   </tr>
+   {% endfor %}
+  </tbody>
+ </table>
+</div>
+{% endblock main-content %}

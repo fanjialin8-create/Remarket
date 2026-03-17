@@ -1,0 +1,43 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Edit Item{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="form-page-head mb-4">
+        <p class="section-kicker">Manage Listing</p>
+        <h1 class="section-title">Edit Item</h1>
+        <p class="form-page-subtext">Update the details of <strong>{{ item.title }}</strong> and keep your listing accurate.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="market-form-card">
+                <form action="{% url 'edit_item' pk=item.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+                        {% for field in form %}
+                            <div class="col-12">
+                                <label class="form-label market-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">Save Changes</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-dark btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}
