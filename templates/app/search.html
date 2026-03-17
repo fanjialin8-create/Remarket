@@ -23,7 +23,11 @@
                                         No Image
                                     </div>
                                 {% endif %}
+                                {% if product.is_active %}
                                 <span class="item-badge">Search Match</span>
+                                {% else %}
+                                <span class="item-badge bg-secondary">soldout</span>
+                                {% endif %}
                             </div>
 
                             <div class="item-card-body">

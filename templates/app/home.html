@@ -127,7 +127,11 @@
                             {% if product.image %}
                                 <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image" loading="lazy">
                             {% endif %}
+                            {% if product.is_active %}
                             <span class="item-badge">Pre-Owned</span>
+                            {% else %}
+                            <span class="item-badge bg-secondary">soldout</span>
+                            {% endif %}
                         </div>
                         <div class="item-card-body">
                             <h5 class="item-title">{{ product.title }}</h5>
@@ -163,7 +167,11 @@
                             {% if product.image %}
                                 <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image" loading="lazy">
                             {% endif %}
+                            {% if product.is_active %}
                             <span class="item-badge">Verified Listing</span>
+                            {% else %}
+                            <span class="item-badge bg-secondary">soldout</span>
+                            {% endif %}
                         </div>
                         <div class="item-card-body">
                             <h5 class="item-title">{{ product.title }}</h5>
@@ -199,7 +207,11 @@
                             {% if product.image %}
                                 <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image" loading="lazy">
                             {% endif %}
+                            {% if product.is_active %}
                             <span class="item-badge">Trending</span>
+                            {% else %}
+                            <span class="item-badge bg-secondary">soldout</span>
+                            {% endif %}
                         </div>
                         <div class="item-card-body">
                             <h5 class="item-title">{{ product.title }}</h5>
@@ -235,7 +247,11 @@
                             {% if product.image %}
                                 <img src="{{ product.image.url }}" alt="{{ product.title }}" class="item-image" loading="lazy">
                             {% endif %}
+                            {% if product.is_active %}
                             <span class="item-badge">Student Pick</span>
+                            {% else %}
+                            <span class="item-badge bg-secondary">soldout</span>
+                            {% endif %}
                         </div>
                         <div class="item-card-body">
                             <h5 class="item-title">{{ product.title }}</h5>

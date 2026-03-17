@@ -23,6 +23,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('orders/', views.orders, name='orders'),
     path('sold-orders/', views.sold_orders, name='sold_orders'),
+    path('orders/<int:order_id>/update-status/', views.update_order_status, name='update_order_status'),
 
     # Item / Listing
     path('post-item/', views.post_item, name='post_item'),
@@ -35,6 +36,7 @@ urlpatterns = [
     # Chat
     path('chat/', views.chat_list, name='chat_list'),
     path('chat/start/<int:item_id>/', views.chat_start, name='chat_start'),
+    path('chat/<int:conversation_id>/api/messages/', views.chat_api_messages, name='chat_api_messages'),
     path('chat/<int:conversation_id>/', views.chat_detail, name='chat_detail'),
 
     # Password Reset

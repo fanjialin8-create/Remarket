@@ -57,7 +57,7 @@
                         {% for item in my_items %}
                             <div class="listing-row">
                                 <div class="listing-main">
-                                    <h3 class="listing-title mb-1">{{ item.title }}</h3>
+                                    <h3 class="listing-title mb-1">{{ item.title }}{% if not item.is_active %} <span class="badge bg-secondary">soldout</span>{% endif %}</h3>
                                     <p class="listing-price mb-0">£{{ item.price }}</p>
                                 </div>
                                 <div class="listing-actions">
@@ -125,7 +125,7 @@
                                         Buyer: {{ order.buyer.username }} · {{ order.status }}
                                     </p>
                                 </div>
-                                <a href="{% url 'orders' %}" class="btn btn-sm btn-outline-dark">View</a>
+                                <a href="{% url 'sold_orders' %}" class="btn btn-sm btn-outline-dark">View</a>
                             </div>
                         {% endfor %}
                     </div>

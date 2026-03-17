@@ -18,10 +18,13 @@
     </div>
 
     <div class="chat-detail-card">
-        <div class="chat-messages-box">
+        <div id="chatMessagesBox" class="chat-messages-box"
+             data-conversation-id="{{ conversation.id }}"
+             data-current-user="{{ request.user.username }}"
+             data-api-url="{% url 'chat_api_messages' conversation.id %}">
             {% for m in messages %}
                 <div class="message-row {% if m.sender == request.user %}message-row-own{% endif %}">
-                    <div class="message-bubble {% if m.sender == request.user %}message-bubble-own{% endif %}">
+                    <div class="message-bubble {% if m.sender == request.user %}message-bubble-own{% endif %}" data-message-id="{{ m.id }}">
                         <div class="message-meta">
                             <span class="message-sender">{{ m.sender.username }}</span>
                             <small class="message-time">{{ m.created_at|date:"m-d H:i" }}</small>
@@ -45,4 +48,5 @@
         </form>
     </div>
 </div>
+<script src="{% static 'app/js/chat.js' %}"></script>
 {% endblock main-content %}

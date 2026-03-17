@@ -24,11 +24,15 @@
                         <img
                             src="{{ img.image.url }}"
                             alt="{{ product.title }}"
-                            class="detail-thumb"
+                            class="detail-thumb{% if forloop.first %} detail-thumb-active{% endif %}"
                             loading="lazy"
-                            onclick="document.getElementById('mainProductImage').src='{{ img.image.url }}'">
+                            data-src="{{ img.image.url }}"
+                            role="button"
+                            tabindex="0"
+                            aria-label="View image {{ forloop.counter }}">
                     {% endfor %}
                 </div>
+                <script src="{% static 'app/js/productdetail.js' %}"></script>
             {% endif %}
         </div>
 
@@ -46,11 +50,15 @@
             <p class="detail-description">{{ product.description }}</p>
 
             <div class="d-flex flex-wrap gap-2 mt-4">
+                {% if product.is_active %}
                 <form action="{% url 'buy_now' %}" method="post" class="m-0">
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{ product.id }}">
                     <button type="submit" class="btn btn-success btn-lg">Buy Now</button>
                 </form>
+                {% else %}
+                <span class="btn btn-secondary btn-lg disabled">soldout</span>
+                {% endif %}
 
                 {% if user.is_authenticated and user != product.seller %}
                     <a href="{% url 'chat_start' product.id %}" class="btn btn-outline-dark btn-lg">Contact Seller</a>

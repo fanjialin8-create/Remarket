@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.models import User
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -176,7 +177,12 @@ def user_login(request):
 
             if user is not None:
                 login(request, user)
-                next_url = request.GET.get('next', 'home')
+                next_url = request.GET.get('next') or 'home'
+                from django.utils.http import url_has_allowed_host_and_scheme
+                if next_url != 'home':
+                    full_url = request.build_absolute_uri(next_url) if next_url.startswith('/') else next_url
+                    if not url_has_allowed_host_and_scheme(full_url, allowed_hosts={request.get_host()}):
+                        next_url = 'home'
                 return redirect(next_url)
             else:
                 try:
@@ -276,11 +282,11 @@ def remove_item(request, pk):
 
 
 def item_detail(request, pk):
-    """Pass the actual item object to the template for multi-image display"""
+    """Pass the actual item object to the template for multi-image display.
+    允许查看已售商品（买家可从订单进入），但仅对在售商品显示购买按钮。"""
     item = get_object_or_404(
         Item.objects.select_related('category', 'seller').prefetch_related('images'),
-        pk=pk,
-        is_active=True
+        pk=pk
     )
     return render(request, 'app/productdetail.html', {
         'product': item,
@@ -297,7 +303,7 @@ def search(request):
     else:
         query = request.GET.get('q', '').strip()
 
-    items = Item.objects.filter(is_active=True).select_related('category', 'seller').prefetch_related('images')
+    items = Item.objects.select_related('category', 'seller').prefetch_related('images')
     if query:
         items = items.filter(Q(title__icontains=query) | Q(description__icontains=query))
 
@@ -339,6 +345,9 @@ def buy_now(request):
             quantity=1,
             status='Pending'
         )
+        # 二手平台：购买后商品下架，防止重复购买
+        item.is_active = False
+        item.save(update_fields=['is_active', 'updated_at'])
 
         messages.success(request, 'Order placed successfully.')
         return redirect('orders')
@@ -394,6 +403,9 @@ def place_order(request, item_id):
         quantity = 1
 
     Order.objects.create(buyer=request.user, item=item, quantity=quantity)
+    # 二手平台：购买后商品下架，防止重复购买
+    item.is_active = False
+    item.save(update_fields=['is_active', 'updated_at'])
     messages.success(request, 'Order placed.')
     return redirect('orders')
 
@@ -418,7 +430,16 @@ def update_order_status(request, order_id):
     if new_status in dict(Order.STATUS_CHOICES):
         order.status = new_status
         order.save()
+        # 卖家取消订单时，仅当该商品无其他有效订单时恢复上架
+        if new_status == 'Cancelled':
+            has_other_active = Order.objects.filter(item=order.item).exclude(status='Cancelled').exclude(pk=order.pk).exists()
+            if not has_other_active:
+                order.item.is_active = True
+                order.item.save(update_fields=['is_active', 'updated_at'])
         messages.success(request, 'Order status updated.')
+    # 卖家更新后跳转到已售订单页
+    if order.item.seller == request.user:
+        return redirect('sold_orders')
     return redirect('orders')
 
 
@@ -428,7 +449,7 @@ def update_order_status(request, order_id):
 def dashboard(request):
     my_items = (
         Item.objects
-        .filter(seller=request.user, is_active=True)
+        .filter(seller=request.user)
         .prefetch_related('images')
         .order_by('-created_at')
     )
@@ -470,11 +491,12 @@ def _product_wrapper(item):
         'seller': item.seller,
         'created_at': item.created_at,
         'category': item.category,
+        'is_active': item.is_active,
     })()
 
 
 def home(request):
-    base = Item.objects.filter(is_active=True).select_related('category', 'seller').prefetch_related('images')
+    base = Item.objects.select_related('category', 'seller').prefetch_related('images').order_by('-created_at')
 
     mobile = list(base.filter(category__slug='electronics')[:8]) or list(base[:8])
     electronics = list(base.filter(category__slug='electronics')[:8]) or list(base[:8])
@@ -500,7 +522,7 @@ def home(request):
 
 def category_items(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    items = Item.objects.filter(category=category, is_active=True).select_related('seller', 'category').prefetch_related('images').order_by('-created_at')
+    items = Item.objects.filter(category=category).select_related('seller', 'category').prefetch_related('images').order_by('-created_at')
 
     return render(request, 'app/category_items.html', {
         'category': category,
@@ -577,7 +599,7 @@ def chat_list(request):
 
 @login_required(login_url='/login/')
 def chat_start(request, item_id):
-    item = get_object_or_404(Item, pk=item_id, is_active=True)
+    item = get_object_or_404(Item, pk=item_id)
     seller = item.seller
     if request.user == seller:
         messages.error(request, 'Cannot chat with yourself.')
@@ -646,5 +668,6 @@ def sold_orders(request):
     )
 
     return render(request, 'app/sold_orders.html', {
-        'sold_orders': sold_orders
+        'sold_orders': sold_orders,
+        'status_choices': Order.STATUS_CHOICES,
     })
