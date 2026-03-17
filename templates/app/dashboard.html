@@ -1,0 +1,153 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="dashboard-header mb-4">
+        <p class="section-kicker">Account</p>
+        <h1 class="section-title">My Dashboard</h1>
+        <p class="dashboard-subtext">
+            Manage your listings and clearly track your buying and selling activity.
+        </p>
+    </div>
+
+    <div class="dashboard-actions mb-4 d-flex flex-wrap gap-3">
+        <a href="{% url 'post_item' %}" class="btn btn-success">Post Item</a>
+        <a href="{% url 'orders' %}" class="btn btn-outline-dark">My Orders</a>
+        <a href="{% url 'chat_list' %}" class="btn btn-outline-dark">Chats</a>
+    </div>
+
+    <!-- Top summary cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <span class="stats-label">My Listings</span>
+                <h2 class="stats-value">{{ my_items|length }}</h2>
+                <p class="stats-note mb-0">Items currently posted by you</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <span class="stats-label">Orders Bought</span>
+                <h2 class="stats-value">{{ orders_bought|length }}</h2>
+                <p class="stats-note mb-0">Orders you placed as a buyer</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <span class="stats-label">Orders Sold</span>
+                <h2 class="stats-value">{{ orders_sold|length }}</h2>
+                <p class="stats-note mb-0">Orders received for your listings</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left column -->
+        <div class="col-lg-7">
+            <div class="content-card mb-4">
+                <div class="content-card-head">
+                    <h2 class="dashboard-block-title mb-0">My Listings</h2>
+                    <a href="{% url 'post_item' %}" class="btn btn-success btn-sm">Add New</a>
+                </div>
+
+                {% if my_items %}
+                    <div class="listings-grid mt-3">
+                        {% for item in my_items %}
+                            <div class="listing-row">
+                                <div class="listing-main">
+                                    <h3 class="listing-title mb-1">{{ item.title }}</h3>
+                                    <p class="listing-price mb-0">£{{ item.price }}</p>
+                                </div>
+                                <div class="listing-actions">
+                                    <a href="{% url 'product-detail' pk=item.pk %}" class="btn btn-sm btn-outline-dark">View</a>
+                                    <a href="{% url 'edit_item' pk=item.pk %}" class="btn btn-sm btn-outline-success">Edit</a>
+                                    <a href="{% url 'remove_item' pk=item.pk %}"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Delete this item?')">Delete</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-mini-state mt-3">
+                        <p class="mb-2">You have not posted any items yet.</p>
+                        <a href="{% url 'post_item' %}" class="btn btn-success btn-sm">Post your first item</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="col-lg-5">
+            <div class="content-card mb-4">
+                <div class="content-card-head d-block mb-3">
+                    <h2 class="dashboard-block-title mb-1">Recent Purchases</h2>
+                    <p class="dashboard-mini-subtext mb-0">Items you have bought recently</p>
+                </div>
+
+                {% if orders_bought %}
+                    <div class="dashboard-order-list">
+                        {% for order in orders_bought|slice:":3" %}
+                            <div class="dashboard-order-row">
+                                <div>
+                                    <h3 class="dashboard-order-title mb-1">{{ order.item.title }}</h3>
+                                    <p class="dashboard-order-meta mb-0">
+                                        £{{ order.item.price }} · {{ order.status }}
+                                    </p>
+                                </div>
+                                <a href="{% url 'orders' %}" class="btn btn-sm btn-outline-dark">View</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'orders' %}" class="btn btn-outline-dark btn-sm">View Bought Orders</a>
+                    </div>
+                {% else %}
+                    <p class="empty-state-text mb-0">You have not placed any orders yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="content-card mb-4">
+                <div class="content-card-head d-block mb-3">
+                    <h2 class="dashboard-block-title mb-1">Recent Sales</h2>
+                    <p class="dashboard-mini-subtext mb-0">Orders placed by buyers for your items</p>
+                </div>
+
+                {% if orders_sold %}
+                    <div class="dashboard-order-list">
+                        {% for order in orders_sold|slice:":3" %}
+                            <div class="dashboard-order-row">
+                                <div>
+                                    <h3 class="dashboard-order-title mb-1">{{ order.item.title }}</h3>
+                                    <p class="dashboard-order-meta mb-0">
+                                        Buyer: {{ order.buyer.username }} · {{ order.status }}
+                                    </p>
+                                </div>
+                                <a href="{% url 'orders' %}" class="btn btn-sm btn-outline-dark">View</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'sold_orders' %}" class="btn btn-outline-dark btn-sm">View Sold Orders</a>
+                    </div>
+                {% else %}
+                    <p class="empty-state-text mb-0">No sales yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="content-card">
+                <h2 class="dashboard-block-title mb-3">Quick Actions</h2>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'post_item' %}" class="btn btn-success">Post Item</a>
+                    <a href="{% url 'orders' %}" class="btn btn-outline-dark">View Bought Orders</a>
+                    <a href="{% url 'sold_orders' %}" class="btn btn-outline-dark">View Sold Orders</a>
+                    <a href="{% url 'chat_list' %}" class="btn btn-outline-dark">Open Chats</a>
+                    <a href="{% url 'search' %}" class="btn btn-outline-dark">Search Items</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}

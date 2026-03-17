@@ -1,0 +1,48 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Chat - {{ other.username }}{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="chat-detail-head mb-4">
+        <p class="section-kicker">Conversation</p>
+        <h1 class="section-title">Chat with {{ other.username }}</h1>
+        {% if conversation.item %}
+            <p class="dashboard-subtext mb-0">
+                About item:
+                <a href="{% url 'product-detail' conversation.item.id %}" class="chat-item-link">
+                    {{ conversation.item.title }}
+                </a>
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="chat-detail-card">
+        <div class="chat-messages-box">
+            {% for m in messages %}
+                <div class="message-row {% if m.sender == request.user %}message-row-own{% endif %}">
+                    <div class="message-bubble {% if m.sender == request.user %}message-bubble-own{% endif %}">
+                        <div class="message-meta">
+                            <span class="message-sender">{{ m.sender.username }}</span>
+                            <small class="message-time">{{ m.created_at|date:"m-d H:i" }}</small>
+                        </div>
+                        <p class="message-content mb-0">{{ m.content }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-mini-state text-center py-4">
+                    <p class="mb-0">No messages yet. Send the first one.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="post" action="" class="chat-form-wrap">
+            {% csrf_token %}
+            <div class="chat-input-row">
+                <input type="text" name="content" class="form-control chat-input" placeholder="Type a message..." required maxlength="2000">
+                <button type="submit" class="btn btn-success chat-send-btn">Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main-content %}

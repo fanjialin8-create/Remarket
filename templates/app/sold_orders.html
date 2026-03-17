@@ -1,0 +1,44 @@
+{% extends 'app/base.html' %}
+{% block title %}Sold Orders{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <p class="section-kicker">Seller Dashboard</p>
+        <h1 class="section-title">Sold Orders</h1>
+        <p class="dashboard-subtext">
+            Review orders placed by buyers for your items.
+        </p>
+    </div>
+
+    <div class="content-card">
+        {% if sold_orders %}
+            <div class="dashboard-order-list">
+                {% for order in sold_orders %}
+                    <div class="dashboard-order-row">
+                        <div>
+                            <h3 class="dashboard-order-title mb-1">{{ order.item.title }}</h3>
+                            <p class="dashboard-order-meta mb-1">
+                                Buyer: {{ order.buyer.username }}
+                            </p>
+                            <p class="dashboard-order-meta mb-1">
+                                Quantity: {{ order.quantity }} · Status: {{ order.status }}
+                            </p>
+                            <p class="dashboard-order-meta mb-0">
+                                Ordered on: {{ order.created_at|date:"M d, Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{% url 'product-detail' pk=order.item.pk %}" class="btn btn-sm btn-outline-dark">
+                                View Item
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-state-text mb-0">No sales yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock main-content %}

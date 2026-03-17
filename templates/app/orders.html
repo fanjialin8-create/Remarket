@@ -1,0 +1,59 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}My Orders{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="dashboard-header mb-4">
+        <p class="section-kicker">Account</p>
+        <h1 class="section-title">My Orders</h1>
+        <p class="dashboard-subtext">
+            Track the items you have purchased on ReMarket.
+        </p>
+    </div>
+
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+                <div class="order-card-clean">
+                    <div class="order-card-left">
+                        {% if order.item.images.first %}
+                            <img src="{{ order.item.images.first.image.url }}"
+                                 alt="{{ order.item.title }}"
+                                 class="order-thumb-clean"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="order-thumb-placeholder">No Image</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="order-card-middle">
+                        <h2 class="order-title-clean">{{ order.item.title }}</h2>
+                        <p class="order-meta-clean">Quantity: {{ order.quantity }}</p>
+                        <p class="order-meta-clean">Price: £{{ order.item.price }}</p>
+                        <p class="order-meta-clean">
+                            Order Date: {{ order.created_at|date:"F j, Y, g:i a" }}
+                        </p>
+                    </div>
+
+                    <div class="order-card-right">
+                        <span class="order-status-badge">{{ order.status }}</span>
+                        <a href="{% url 'product-detail' pk=order.item.pk %}"
+                           class="btn btn-sm btn-outline-dark mt-3">
+                            View Item
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="content-card text-center">
+            <h2 class="dashboard-block-title mb-2">No orders yet</h2>
+            <p class="empty-state-text mb-3">
+                You have not placed any orders on ReMarket yet.
+            </p>
+            <a href="{% url 'home' %}" class="btn btn-success">Browse Items</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock main-content %}

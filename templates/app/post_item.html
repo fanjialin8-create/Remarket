@@ -1,0 +1,125 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Post Item{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="form-page-head mb-4">
+        <p class="section-kicker">Sell on ReMarket</p>
+        <h1 class="section-title">Post a New Item</h1>
+        <p class="form-page-subtext">Create a listing for your pre-owned item and connect with interested buyers.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="market-form-card">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} mb-3">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form action="{% url 'post_item' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label market-label">Title</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label market-label">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label market-label">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">£</span>
+                                {{ form.price }}
+                            </div>
+                            {% if form.price.errors %}
+                                <div class="text-danger small mt-1">{{ form.price.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="id_condition" class="form-label market-label">Condition</label>
+                            {{ form.condition }}
+                            {% if form.condition.errors %}
+                                <div class="text-danger small mt-1">{{ form.condition.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label market-label">Location</label>
+                            {{ form.location }}
+                            {% if form.location.errors %}
+                                <div class="text-danger small mt-1">{{ form.location.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="id_category" class="form-label market-label">Category</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger small mt-1">{{ form.category.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label market-label">Images</label>
+
+                            <div class="custom-upload-wrap">
+                                <input type="file" id="imageUpload" name="images" class="d-none" multiple required>
+                                <label for="imageUpload" class="custom-upload-btn">Choose Files</label>
+                                <span id="fileName" class="custom-upload-text">No files chosen</span>
+                            </div>
+
+                            {% if form.images.errors %}
+                                <div class="text-danger small mt-1">{{ form.images.errors }}</div>
+                            {% endif %}
+                            <div class="form-help-text mt-2">
+                                Upload at least one image. You can select multiple files.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">Publish Listing</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-dark btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('imageUpload');
+    const fileName = document.getElementById('fileName');
+
+    if (input && fileName) {
+        input.addEventListener('change', function () {
+            if (this.files.length === 0) {
+                fileName.textContent = 'No files chosen';
+            } else if (this.files.length === 1) {
+                fileName.textContent = this.files[0].name;
+            } else {
+                fileName.textContent = `${this.files.length} files selected`;
+            }
+        });
+    }
+});
+</script>
+{% endblock main-content %}

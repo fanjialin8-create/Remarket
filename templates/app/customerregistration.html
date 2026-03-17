@@ -1,0 +1,98 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Register{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+    <div class="auth-page-wrap">
+        <div class="row justify-content-center align-items-center g-4">
+            <div class="col-lg-5">
+                <div class="auth-intro-card">
+                    <p class="section-kicker">Join ReMarket</p>
+                    <h1 class="section-title">Create Your Account</h1>
+                    <p class="auth-intro-text">
+                        Start buying, selling, and chatting on ReMarket with your own account.
+                    </p>
+                    <ul class="auth-feature-list">
+                        <li>Post your pre-owned items easily</li>
+                        <li>Connect directly with buyers and sellers</li>
+                        <li>Manage listings and orders from one dashboard</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="market-form-card auth-form-card">
+                    <h3 class="auth-form-title">Register</h3>
+                    <p class="auth-form-subtext">Create an account to start using ReMarket.</p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if 'register_msg' in message.tags %}
+                                <div class="alert {% if message.level_tag == 'success' %}alert-success{% elif message.level_tag == 'warning' %}alert-warning{% else %}alert-danger{% endif %} mb-3">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <form action="" method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label market-label">Username</label>
+                            <input type="text" class="form-control auth-input {% if form.username.errors %}is-invalid{% endif %}" id="username" name="username" value="{{ form.username.value|default:'' }}" maxlength="150" required>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputEmail4" class="form-label market-label">Email</label>
+                            <input type="email" class="form-control auth-input {% if form.email.errors %}is-invalid{% endif %}" id="inputEmail4" name="email" value="{{ form.email.value|default:'' }}" required>
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                            {% else %}
+                                <div id="emailHelp" class="form-help-text">We'll send a verification link to this email.</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPassword1" class="form-label market-label">Password</label>
+                            <input type="password" class="form-control auth-input {% if form.password1.errors %}is-invalid{% endif %}" id="inputPassword1" name="password1" required>
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>
+                            {% else %}
+                                <div class="form-text">At least 8 characters, not too common.</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPassword2" class="form-label market-label">Confirm Password</label>
+                            <input type="password" class="form-control auth-input {% if form.password2.errors %}is-invalid{% endif %}" id="inputPassword2" name="password2" required>
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            {% for error in form.non_field_errors %}
+                                <p class="alert alert-danger my-3">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-success btn-lg w-100">Create Account</button>
+
+                        <div class="auth-bottom-text text-center mt-4">
+                            <small>
+                                Already have an account?
+                                <a href="{% url 'login' %}" class="auth-link fw-bold">Login Now</a>
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}
