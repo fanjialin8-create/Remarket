@@ -1133,6 +1133,10 @@ a {
 }
 
 .listing-main,
+.order-status-select-width {
+    width: auto;
+}
+
 .dashboard-order-row > div:first-child {
     min-width: 0;
 }

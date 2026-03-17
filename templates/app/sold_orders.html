@@ -1,4 +1,5 @@
 {% extends 'app/base.html' %}
+{% load static %}
 {% block title %}Sold Orders{% endblock title %}
 
 {% block main-content %}
@@ -22,16 +23,16 @@
                                 Buyer: {{ order.buyer.username }}
                             </p>
                             <p class="dashboard-order-meta mb-1">
-                                Quantity: {{ order.quantity }} · Status: {{ order.status }}
+                                Quantity: {{ order.quantity }} · Status: <span class="order-status-display">{{ order.status }}</span>
                             </p>
                             <p class="dashboard-order-meta mb-0">
                                 Ordered on: {{ order.created_at|date:"M d, Y H:i" }}
                             </p>
                         </div>
                         <div class="d-flex gap-2 flex-wrap align-items-center">
-                            <form action="{% url 'update_order_status' order.id %}" method="post" class="d-flex gap-2 align-items-center">
+                            <form action="{% url 'update_order_status' order.id %}" method="post" class="d-flex gap-2 align-items-center order-status-form">
                                 {% csrf_token %}
-                                <select name="status" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                                <select name="status" class="form-select form-select-sm order-status-select order-status-select-width" data-original-value="{{ order.status }}">
                                     {% for value, label in status_choices %}
                                     <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
                                     {% endfor %}
@@ -49,4 +50,5 @@
         {% endif %}
     </div>
 </div>
+<script src="{% static 'app/js/sold_orders.js' %}"></script>
 {% endblock main-content %}

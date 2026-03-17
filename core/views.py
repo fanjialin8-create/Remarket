@@ -11,7 +11,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.contrib.messages import get_messages
 from django.core.mail import send_mail
 from django.conf import settings
@@ -425,6 +425,8 @@ def orders(request):
 def update_order_status(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     if order.item.seller != request.user and not request.user.is_staff:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Forbidden'}, status=403)
         return HttpResponseForbidden('You do not have permission')
     new_status = request.POST.get('status')
     if new_status in dict(Order.STATUS_CHOICES):
@@ -437,7 +439,9 @@ def update_order_status(request, order_id):
                 order.item.is_active = True
                 order.item.save(update_fields=['is_active', 'updated_at'])
         messages.success(request, 'Order status updated.')
-    # 卖家更新后跳转到已售订单页
+    # AJAX 请求返回 JSON，不整页刷新
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True, 'status': order.status})
     if order.item.seller == request.user:
         return redirect('sold_orders')
     return redirect('orders')

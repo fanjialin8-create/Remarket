@@ -37,6 +37,17 @@ A campus second-hand goods trading platform.
 5. Start: `python manage.py runserver`
 6. Visit: http://127.0.0.1:8000
 
+## Running Tests
+
+```bash
+python manage.py test core
+```
+
+Tests cover:
+- **Models**: Category, Item, Order, Conversation, EmailVerification
+- **Views**: buy_now (purchase flow, item deactivation), update_order_status (seller control, AJAX)
+- **API**: chat_api_messages (message list)
+
 ## Tech Stack
 
 - Django 5.0
