@@ -142,7 +142,8 @@ if USE_REAL_EMAIL:
     EMAIL_HOST = (os.environ.get('EMAIL_HOST') or 'smtp.gmail.com').strip()
     EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
     EMAIL_HOST_USER = (os.environ.get('EMAIL_HOST_USER') or '').strip()
-    EMAIL_HOST_PASSWORD = (os.environ.get('EMAIL_HOST_PASSWORD') or '').strip()
+    _pw = (os.environ.get('EMAIL_HOST_PASSWORD') or '').strip()
+    EMAIL_HOST_PASSWORD = ''.join(c for c in _pw if ord(c) < 128 and not c.isspace())
     # Port 465 uses SSL, 587 uses TLS
     if EMAIL_PORT == 465:
         EMAIL_USE_SSL = True
