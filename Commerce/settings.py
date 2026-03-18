@@ -124,10 +124,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ============ Email Configuration ============
 # Create .env in project root with:
 # USE_REAL_EMAIL=true
-# EMAIL_HOST=smtp.gmail.com (or smtp.qq.com, smtp.163.com)
+# EMAIL_HOST=smtp.gmail.com   <- PythonAnywhere FREE: must use Gmail (QQ/163 blocked)
 # EMAIL_PORT=587
 # EMAIL_HOST_USER=your_email@gmail.com
-# EMAIL_HOST_PASSWORD=app_password
+# EMAIL_HOST_PASSWORD=app_password  <- Use Gmail App Password from Google Account
 
 try:
     from dotenv import load_dotenv
@@ -139,7 +139,7 @@ USE_REAL_EMAIL = os.environ.get('USE_REAL_EMAIL', 'False').lower() == 'true'
 
 if USE_REAL_EMAIL:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.qq.com').strip()
+    EMAIL_HOST = (os.environ.get('EMAIL_HOST') or 'smtp.gmail.com').strip()
     EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
     EMAIL_HOST_USER = (os.environ.get('EMAIL_HOST_USER') or '').strip()
     EMAIL_HOST_PASSWORD = (os.environ.get('EMAIL_HOST_PASSWORD') or '').strip()

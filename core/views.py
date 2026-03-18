@@ -15,6 +15,9 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.contrib.messages import get_messages
 from django.core.mail import send_mail
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .models import Category, Item, ItemImage, Order, Conversation, Message, EmailVerification
 from .forms import RegistrationForm, LoginForm, ItemForm, CustomPasswordResetForm
@@ -63,7 +66,8 @@ def register(request):
                     'Registration successful. Please check your email to verify your account.',
                     extra_tags='register_msg'
                 )
-            except Exception:
+            except Exception as e:
+                logger.exception('Failed to send verification email: %s', e)
                 storage = get_messages(request)
                 for _ in storage:
                     pass
@@ -124,7 +128,8 @@ def resend_verification(request):
                 fail_silently=False,
             )
             messages.success(request, 'Verification email sent. Please check your inbox.')
-        except Exception:
+        except Exception as e:
+            logger.exception('Failed to resend verification email: %s', e)
             messages.error(request, 'Could not send email. Please check your email configuration.')
 
         return redirect('login')
