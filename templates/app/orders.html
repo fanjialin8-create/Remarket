@@ -3,19 +3,13 @@
 {% block title %}My Orders{% endblock title %}
 
 {% block main-content %}
-<div class="container py-5">
-    <div class="dashboard-header mb-4">
-        <p class="section-kicker">Account</p>
-        <h1 class="section-title">My Orders</h1>
-        <p class="dashboard-subtext">
-            Track the items you have purchased on ReMarket.
-        </p>
-    </div>
+<div class="container py-5" data-orders-api-url="{% url 'orders_api_statuses' %}">
+    <h1 class="orders-page-title">My Orders</h1>
 
     {% if orders %}
         <div class="orders-list">
             {% for order in orders %}
-                <div class="order-card-clean">
+                <div class="order-card-clean" data-order-id="{{ order.id }}">
                     <div class="order-card-left">
                         {% if order.item.images.first %}
                             <img src="{{ order.item.images.first.image.url }}"
@@ -31,17 +25,19 @@
                         <h2 class="order-title-clean">{{ order.item.title }}</h2>
                         <p class="order-meta-clean">Quantity: {{ order.quantity }}</p>
                         <p class="order-meta-clean">Price: £{{ order.item.price }}</p>
-                        <p class="order-meta-clean">
-                            Order Date: {{ order.created_at|date:"F j, Y, g:i a" }}
-                        </p>
+                        <p class="order-meta-clean">Order Date: {{ order.created_at|date:"Y-m-d" }}</p>
                     </div>
 
                     <div class="order-card-right">
-                        <span class="order-status-badge">{{ order.status }}</span>
+                        <span class="order-status-badge" data-order-status>{{ order.status }}</span>
+                        <div class="buyer-actions" data-order-id="{{ order.id }}"
+                             data-action-url="{% url 'buyer_order_action' order.id %}"
+                             style="display:{% if order.status == 'Confirmed' %}flex{% else %}none{% endif %}">
+                            <button type="button" class="btn btn-success btn-sm" data-buyer-action="confirm_received">Confirm received</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-buyer-action="report_not_received">Not received</button>
+                        </div>
                         <a href="{% url 'product-detail' pk=order.item.pk %}"
-                           class="btn btn-sm btn-outline-dark mt-3">
-                            View Item
-                        </a>
+                           class="btn btn-outline-dark">View Item</a>
                     </div>
                 </div>
             {% endfor %}
@@ -56,4 +52,5 @@
         </div>
     {% endif %}
 </div>
+<script src="{% static 'app/js/orders.js' %}"></script>
 {% endblock main-content %}

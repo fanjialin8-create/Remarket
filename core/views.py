@@ -283,7 +283,7 @@ def remove_item(request, pk):
 
 def item_detail(request, pk):
     """Pass the actual item object to the template for multi-image display.
-    允许查看已售商品（买家可从订单进入），但仅对在售商品显示购买按钮。"""
+    Sold items remain viewable (e.g. from orders) but buy button only for active items."""
     item = get_object_or_404(
         Item.objects.select_related('category', 'seller').prefetch_related('images'),
         pk=pk
@@ -345,7 +345,6 @@ def buy_now(request):
             quantity=1,
             status='Pending'
         )
-        # 二手平台：购买后商品下架，防止重复购买
         item.is_active = False
         item.save(update_fields=['is_active', 'updated_at'])
 
@@ -403,7 +402,6 @@ def place_order(request, item_id):
         quantity = 1
 
     Order.objects.create(buyer=request.user, item=item, quantity=quantity)
-    # 二手平台：购买后商品下架，防止重复购买
     item.is_active = False
     item.save(update_fields=['is_active', 'updated_at'])
     messages.success(request, 'Order placed.')
@@ -416,9 +414,58 @@ def orders(request):
         Order.objects
         .filter(buyer=request.user)
         .select_related('item')
+        .prefetch_related('item__images')
         .order_by('-created_at')
     )
     return render(request, 'app/orders.html', {'orders': orders})
+
+
+@login_required(login_url='/login/')
+def orders_api_statuses(request):
+    """Return buyer's order statuses as JSON for polling/sync."""
+    orders = (
+        Order.objects
+        .filter(buyer=request.user)
+        .values('id', 'status')
+    )
+    data = {'orders': list(orders)}
+    return JsonResponse(data)
+
+
+@login_required(login_url='/login/')
+def buyer_order_action(request, order_id):
+    """Buyer confirms received or reports not received when order is Confirmed."""
+    order = get_object_or_404(Order, pk=order_id)
+    if order.buyer != request.user:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Forbidden'}, status=403)
+        return HttpResponseForbidden('You do not have permission')
+    if order.status != 'Confirmed':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Order must be Confirmed'}, status=400)
+        return redirect('orders')
+    action = request.POST.get('action')
+    if action == 'confirm_received':
+        order.status = 'Completed'
+        order.save()
+        new_status = 'Completed'
+    elif action == 'report_not_received':
+        order.status = 'Cancelled'
+        order.save()
+        has_other_active = Order.objects.filter(item=order.item).exclude(
+            status='Cancelled'
+        ).exclude(pk=order.pk).exists()
+        if not has_other_active:
+            order.item.is_active = True
+            order.item.save(update_fields=['is_active', 'updated_at'])
+        new_status = 'Cancelled'
+    else:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Invalid action'}, status=400)
+        return redirect('orders')
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True, 'status': new_status})
+    return redirect('orders')
 
 
 @login_required(login_url='/login/')
@@ -432,14 +479,12 @@ def update_order_status(request, order_id):
     if new_status in dict(Order.STATUS_CHOICES):
         order.status = new_status
         order.save()
-        # 卖家取消订单时，仅当该商品无其他有效订单时恢复上架
         if new_status == 'Cancelled':
             has_other_active = Order.objects.filter(item=order.item).exclude(status='Cancelled').exclude(pk=order.pk).exists()
             if not has_other_active:
                 order.item.is_active = True
                 order.item.save(update_fields=['is_active', 'updated_at'])
         messages.success(request, 'Order status updated.')
-    # AJAX 请求返回 JSON，不整页刷新
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'success': True, 'status': order.status})
     if order.item.seller == request.user:
@@ -668,10 +713,27 @@ def sold_orders(request):
         Order.objects
         .filter(item__seller=request.user)
         .select_related('buyer', 'item')
+        .prefetch_related('item__images')
         .order_by('-created_at')
     )
 
+    status_choices_seller = [
+        (v, 'Delivered' if v == 'Confirmed' else l)
+        for v, l in Order.STATUS_CHOICES
+        if v != 'Completed'
+    ]
     return render(request, 'app/sold_orders.html', {
         'sold_orders': sold_orders,
-        'status_choices': Order.STATUS_CHOICES,
+        'status_choices': status_choices_seller,
     })
+
+
+@login_required(login_url='/login/')
+def sold_orders_api_statuses(request):
+    """Return seller's order statuses as JSON for polling/sync."""
+    orders = (
+        Order.objects
+        .filter(item__seller=request.user)
+        .values('id', 'status')
+    )
+    return JsonResponse({'orders': list(orders)})

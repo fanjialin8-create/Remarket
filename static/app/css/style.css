@@ -1211,6 +1211,13 @@ a {
 /* =========================
    Orders Page
 ========================= */
+.orders-page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 24px;
+}
+
 .orders-list {
     display: grid;
     gap: 20px;
@@ -1279,6 +1286,23 @@ a {
     flex-direction: column;
     align-items: flex-end;
     justify-content: center;
+    gap: 12px;
+}
+
+.order-status-form {
+    width: 100%;
+    max-width: 160px;
+}
+
+.order-status-form .form-select {
+    width: 100%;
+}
+
+.buyer-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
 }
 
 .order-status-badge {

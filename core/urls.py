@@ -22,8 +22,11 @@ urlpatterns = [
     # Search / Orders
     path('search/', views.search, name='search'),
     path('orders/', views.orders, name='orders'),
+    path('orders/api/statuses/', views.orders_api_statuses, name='orders_api_statuses'),
     path('sold-orders/', views.sold_orders, name='sold_orders'),
+    path('sold-orders/api/statuses/', views.sold_orders_api_statuses, name='sold_orders_api_statuses'),
     path('orders/<int:order_id>/update-status/', views.update_order_status, name='update_order_status'),
+    path('orders/<int:order_id>/buyer-action/', views.buyer_order_action, name='buyer_order_action'),
 
     # Item / Listing
     path('post-item/', views.post_item, name='post_item'),
