@@ -4,7 +4,12 @@ Remarket Admin - Manage users and items
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Category, Item, Order, Conversation, Message, EmailVerification
+from .models import Category, Item, ItemImage, Order, Conversation, Message, EmailVerification
+
+
+class ItemImageInline(admin.TabularInline):
+    model = ItemImage
+    extra = 0
 
 
 @admin.register(Category)
@@ -16,6 +21,7 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'seller', 'category', 'price', 'condition', 'location', 'is_active', 'created_at')
+    inlines = [ItemImageInline]
     list_filter = ('category', 'is_active', 'created_at')
     search_fields = ('title', 'description')
     list_editable = ('is_active',)
@@ -38,6 +44,13 @@ class ConversationAdmin(admin.ModelAdmin):
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'conversation', 'sender', 'content', 'created_at')
     list_filter = ('created_at',)
+
+
+@admin.register(ItemImage)
+class ItemImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'item', 'image', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('item__title',)
 
 
 @admin.register(EmailVerification)
