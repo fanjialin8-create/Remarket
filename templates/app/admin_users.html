@@ -17,7 +17,7 @@
     <td>{{ u.email|default:"-" }}</td>
     <td>{% if u.is_staff %}Yes{% else %}No{% endif %}</td>
     <td>{% if u.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Disabled</span>{% endif %}</td>
-    <td>{% if u.is_active %}<a href="{% url 'admin_disable_user' u.id %}" class="btn btn-sm btn-warning" onclick="return confirm('Disable user?')">Disable</a>{% endif %}</td>
+    <td>{% if u.is_active %}<a href="{% url 'admin_disable_user' u.id %}" class="btn btn-sm btn-warning js-confirm" data-confirm="Disable this user?">Disable</a>{% endif %}</td>
    </tr>
    {% endfor %}
   </tbody>

@@ -8,7 +8,7 @@
    {% if item.image %}
    <img src="{{ item.image.url }}" class="img-fluid rounded" alt="{{ item.title }}" loading="lazy">
    {% else %}
-   <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:300px">
+   <div class="bg-light rounded d-flex align-items-center justify-content-center item-detail-placeholder">
     <span class="text-muted">No image</span>
    </div>
    {% endif %}
@@ -31,7 +31,7 @@
    </form>
    {% else %}
    <a href="{% url 'edit_item' pk=item.pk %}" class="btn btn-outline-primary">Edit</a>
-   <a href="{% url 'remove_item' pk=item.pk %}" class="btn btn-outline-danger" onclick="return confirm('Delete?')">Delete</a>
+   <a href="{% url 'remove_item' pk=item.pk %}" class="btn btn-outline-danger js-confirm" data-confirm="Delete this item?">Delete</a>
    {% endif %}
    {% else %}
    <p><a href="{% url 'login' %}">Log in</a> to place an order</p>

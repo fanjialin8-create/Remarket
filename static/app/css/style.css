@@ -1014,6 +1014,10 @@ a {
     display: block;
     color: inherit;
 }
+
+.item-detail-placeholder {
+    height: 300px;
+}
 .detail-thumbs {
     margin-top: 12px;
 }

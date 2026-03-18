@@ -13,12 +13,12 @@
    {% for item in items %}
    <tr>
     <td>{{ item.id }}</td>
-    <td><a href="{% url 'item_detail' item.pk %}">{{ item.title|truncatewords:5 }}</a></td>
+    <td><a href="{% url 'product-detail' pk=item.pk %}">{{ item.title|truncatewords:5 }}</a></td>
     <td>{{ item.seller.username }}</td>
     <td>{{ item.category.name|default:"-" }}</td>
     <td>¥ {{ item.price }}</td>
     <td>{% if item.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
-    <td>{% if item.is_active %}<a href="{% url 'admin_remove_item' item.id %}" class="btn btn-sm btn-warning" onclick="return confirm('Deactivate?')">Deactivate</a>{% endif %}</td>
+    <td>{% if item.is_active %}<a href="{% url 'admin_remove_item' item.id %}" class="btn btn-sm btn-warning js-confirm" data-confirm="Deactivate this item?">Deactivate</a>{% endif %}</td>
    </tr>
    {% endfor %}
   </tbody>

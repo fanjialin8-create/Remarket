@@ -64,8 +64,8 @@
                                     <a href="{% url 'product-detail' pk=item.pk %}" class="btn btn-sm btn-outline-dark">View</a>
                                     <a href="{% url 'edit_item' pk=item.pk %}" class="btn btn-sm btn-outline-success">Edit</a>
                                     <a href="{% url 'remove_item' pk=item.pk %}"
-                                       class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('Delete this item?')">Delete</a>
+                                       class="btn btn-sm btn-outline-danger js-confirm"
+                                       data-confirm="Delete this item?">Delete</a>
                                 </div>
                             </div>
                         {% endfor %}

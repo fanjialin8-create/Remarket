@@ -35,7 +35,7 @@
  </div>
  <div class="mt-3">
   <a href="{% url 'home' %}" class="btn btn-outline-secondary">Back to Home</a>
-  <a href="/admin/" class="btn btn-outline-secondary">Django Admin</a>
+  <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary">Django Admin</a>
  </div>
 </div>
 {% endblock main-content %}

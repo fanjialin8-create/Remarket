@@ -103,23 +103,5 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const input = document.getElementById('imageUpload');
-    const fileName = document.getElementById('fileName');
-
-    if (input && fileName) {
-        input.addEventListener('change', function () {
-            if (this.files.length === 0) {
-                fileName.textContent = 'No files chosen';
-            } else if (this.files.length === 1) {
-                fileName.textContent = this.files[0].name;
-            } else {
-                fileName.textContent = `${this.files.length} files selected`;
-            }
-        });
-    }
-});
-</script>
+<script src="{% static 'app/js/post_item.js' %}"></script>
 {% endblock main-content %}
